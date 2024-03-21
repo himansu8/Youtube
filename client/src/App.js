@@ -1,24 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+//import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import styled, { ThemeProvider } from "styled-components";
+import Menu from "./components/Menu";
+import Navbar from "./components/Navbar";
+import { darkTheme, lightTheme } from "./utils/Theme";
+import { useState } from "react";
+
+const Container = styled.div`
+display: flex;
+`;
+
+const Main = styled.div`
+flex:6;
+background-color: ${({ theme }) => theme.bg};
+`
+const Wrapper = styled.div``
 
 function App() {
+const [darkMode, setDarkMode] = useState(true)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+      <Container>
+        <Menu darkMode={darkMode} setDarkMode={setDarkMode}/>
+        <Main>
+          <Navbar />
+          <Wrapper>
+            video cards
+          </Wrapper>
+        </Main>
+      </Container>
+    </ThemeProvider>
+
   );
 }
 
