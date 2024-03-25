@@ -1,6 +1,6 @@
 import videoModel from '../models/videoModel.js'
-import createError from '../error.js'
-
+import {createError} from '../error.js'
+import userModel from '../models/userModel.js'
 
 export async function addVideo(req, res, next) {
     const newVideo = new videoModel({ userId: req.user.id, ...req.body })
@@ -98,7 +98,7 @@ export async function sub(req, res, next) {
         const subscribedChannels = user.subscribedUsers
         const list = await Promise.all(
             subscribedChannels.map(async (channelId) => {
-                return await Video.find({ userId: channelId });
+                return await videoModel.find({ userId: channelId });
             })
         )
         res.status(200).json(list.flat().sort((a, b) => b.createdAt - a.createdAt));
@@ -113,7 +113,7 @@ export async function sub(req, res, next) {
 export async function getByTag(req, res, next) {
     const tags = req.query.tags.split(",");
     try {
-        const videos = await Video.find({ tags: { $in: tags } }).limit(20);
+        const videos = await videoModel.find({ tags: { $in: tags } }).limit(20);
         res.status(200).json(videos);
     } catch (error) {
         next(error)
@@ -126,7 +126,7 @@ export async function getByTag(req, res, next) {
 export async function search(req, res, next) {
     const query = req.query.q;
     try {
-        const videos = await Video.find({
+        const videos = await videoModel.find({
             title: { $regex: query, $options: "i" },
           }).limit(40);
           res.status(200).json(videos);
