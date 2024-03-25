@@ -1,4 +1,6 @@
-import React from 'react'
+import axios from 'axios';
+import React, { useState } from 'react'
+//import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -63,29 +65,57 @@ const Link = styled.span`
   margin-left: 30px;
 `;
 function SignIn() {
+  //let navigate = useNavigate()
+  let [loginInfo, setLoginInfo] = useState({
+    name: "",
+    email: "",
+    password: ""
+  })
+
+  
+
+  function onChangeHandler(e) {
+    setLoginInfo({
+      ...loginInfo,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  async function onSubmit(e) {
+    try {
+      e.preventDefault();
+      let res = await axios.post('auth/signin',loginInfo)
+      console.log(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+
+
+  }
+
   return (
-   <Container>
-    <Wrapper>
+    <Container>
+      <Wrapper>
         <Title>Sign In</Title>
         <SubTitle>To continue to ApnaTube</SubTitle>
-        <Input placeholder='username' />
-        <Input type='password' placeholder='password' />
-        <Button>Sign Ip</Button>
+        <Input name="name" placeholder='username' onChange={onChangeHandler} />
+        <Input type='password' name="password" placeholder='password' onChange={onChangeHandler} />
+        <Button onClick={onSubmit}>Sign In</Button>
         <Title>Or</Title>
         <Input placeholder="username" />
         <Input placeholder="email" />
         <Input type="password" placeholder="password" />
         <Button>Sign up</Button>
-    </Wrapper>
-    <More>
+      </Wrapper>
+      <More>
         English(USA)
         <Links>
-        <Link>Help</Link>
-        <Link>Privacy</Link>
-        <Link>Term</Link>
+          <Link>Help</Link>
+          <Link>Privacy</Link>
+          <Link>Term</Link>
         </Links>
-    </More>
-   </Container>
+      </More>
+    </Container>
   )
 }
 

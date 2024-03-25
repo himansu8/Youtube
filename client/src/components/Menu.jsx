@@ -83,29 +83,33 @@ const Title = styled.h2`
   color: #aaaaaa;
   margin-bottom: 20px;
 `;
-function Menu({darkMode, setDarkMode}) {
+function Menu({ darkMode, setDarkMode }) {
   return (
     <Container>
       <Wrapper>
-        <Link to="/" style={{textDecoration:"none", color:"inherit"}}>
-        <Logo>
-          <Img src={ApnaTube} />
-          ApnaTube
-        </Logo>
+        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+          <Logo>
+            <Img src={ApnaTube} />
+            ApnaTube
+          </Logo>
         </Link>
         <Item>
           <HomeIcon />
           Home
         </Item>
-        <Item>
-          <ExploreOutlinedIcon />
-          Explore
-        </Item>
-        <Item>
-          <SubscriptionsOutlinedIcon />
-          Subscription
-        </Item>
-        <Hr/>
+        <Link to="/trends" style={{ textDecoration: "none", color: "inherit" }}>
+          <Item>
+            <ExploreOutlinedIcon />
+            Explore
+          </Item>
+        </Link>
+        <Link to="/subscriptions" style={{ textDecoration: "none", color: "inherit" }}>
+          <Item>
+            <SubscriptionsOutlinedIcon />
+            Subscription
+          </Item>
+        </Link>
+        <Hr />
         <Item>
           <VideoLibraryOutlinedIcon />
           Library
@@ -114,17 +118,17 @@ function Menu({darkMode, setDarkMode}) {
           <HistoryOutlinedIcon />
           History
         </Item>
-        <Hr/>
+        <Hr />
         <Login>
-              Sign in to like videos, comment, and subscribe.
-              <Link to="/signin" style={{textDecoration:"none", color:"inherit"}}>
-                <Button>
-                  <AccountCircleOutlinedIcon />
-                  SIGN IN
-                </Button>
-                </Link>
-            </Login>
-        <Hr/>
+          Sign in to like videos, comment, and subscribe.
+          <Link to="/signin" style={{ textDecoration: "none", color: "inherit" }}>
+            <Button>
+              <AccountCircleOutlinedIcon />
+              SIGN IN
+            </Button>
+          </Link>
+        </Login>
+        <Hr />
         <Title>BEST OF APNATUBE</Title>
         <Item>
           <LibraryMusicOutlinedIcon />
@@ -150,7 +154,7 @@ function Menu({darkMode, setDarkMode}) {
           <LiveTvOutlinedIcon />
           Live
         </Item>
-        <Hr/>
+        <Hr />
         <Item>
           <SettingsOutlinedIcon />
           Settings
@@ -163,13 +167,13 @@ function Menu({darkMode, setDarkMode}) {
           <HelpOutlineOutlinedIcon />
           Help
         </Item>
-        <Item onClick={()=>setDarkMode(!darkMode)} >
+        <Item onClick={() => setDarkMode(!darkMode)} >
           <SettingsBrightnessOutlinedIcon />
           {darkMode ? "Light" : "Dark"} Mode
         </Item>
 
 
-       
+
       </Wrapper>
 
     </Container>
