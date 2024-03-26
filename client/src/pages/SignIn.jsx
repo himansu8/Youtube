@@ -1,7 +1,11 @@
 import axios from 'axios';
 import React, { useState } from 'react'
-//import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { loginFailure, loginStart, loginSuccess } from '../redux/userSlice';
+import { auth, provider } from '../fireBase'
+import { signInWithPopup } from "firebase/auth"
 
 const Container = styled.div`
   display: flex;
@@ -65,14 +69,14 @@ const Link = styled.span`
   margin-left: 30px;
 `;
 function SignIn() {
-  //let navigate = useNavigate()
+  let navigate = useNavigate()
   let [loginInfo, setLoginInfo] = useState({
     name: "",
     email: "",
     password: ""
   })
 
-  
+  const dispatch = useDispatch()
 
   function onChangeHandler(e) {
     setLoginInfo({
@@ -82,15 +86,37 @@ function SignIn() {
   }
 
   async function onSubmit(e) {
+    e.preventDefault();
+    dispatch(loginStart())
     try {
-      e.preventDefault();
-      let res = await axios.post('auth/signin',loginInfo)
+      let res = await axios.post('auth/signin', loginInfo)
       console.log(res.data)
+      dispatch(loginSuccess(res.data))
     } catch (error) {
-      console.log(error)
+      console.log(error).
+        dispatch(loginFailure())
     }
+  }
 
-
+  function signInWithGoogle() {
+    dispatch(loginStart());
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        //console.log(result)
+        axios
+          .post("/auth/google", {
+            name: result.user.displayName,
+            email: result.user.email,
+            img: result.user.photoURL,
+          })
+          .then((res) => {
+            console.log(res)
+            dispatch(loginSuccess(res.data));
+            navigate("/")
+          });
+      }).catch((error) => {
+        dispatch(loginFailure());
+      })
   }
 
   return (
@@ -101,6 +127,8 @@ function SignIn() {
         <Input name="name" placeholder='username' onChange={onChangeHandler} />
         <Input type='password' name="password" placeholder='password' onChange={onChangeHandler} />
         <Button onClick={onSubmit}>Sign In</Button>
+        <Title>Or</Title>
+        <Button onClick={signInWithGoogle}>Sign In with Google</Button>
         <Title>Or</Title>
         <Input placeholder="username" />
         <Input placeholder="email" />

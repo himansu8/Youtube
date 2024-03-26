@@ -52,3 +52,28 @@ export async function signin(req, res, next) {
     //next(createError(404,"signup error"))
   }
 }
+
+
+export async function googleAuth(req,res,next){
+  try {
+    const user = await userModel.findOne({email:req.body.email})
+    if(user){
+      const token = jwt.sign({ id: user._id }, config.PRIVATE_KEY)
+      res.cookie("access_token", token, {
+        httpOnly: true
+      }).status(200).json( user._doc)
+    }else{
+      const newUser = new userModel({
+        ...req.body,
+        fromGoogle:true
+      });
+      const savedUser = await newUser.save();
+      const token = jwt.sign({ id: savedUser._id }, config.PRIVATE_KEY)
+      res.cookie("access_token", token, {
+        httpOnly: true
+      }).status(200).json( savedUser._doc)
+    }
+  } catch (error) {
+    next(error)
+  }
+}
