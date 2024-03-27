@@ -89,7 +89,7 @@ function SignIn() {
     e.preventDefault();
     dispatch(loginStart())
     try {
-      let res = await axios.post('auth/signin', loginInfo)
+      let res = await axios.post('/auth/signin', loginInfo)
       console.log(res.data)
       dispatch(loginSuccess(res.data))
     } catch (error) {
