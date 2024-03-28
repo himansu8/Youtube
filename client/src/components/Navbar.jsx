@@ -2,10 +2,16 @@ import React, { useState } from 'react'
 import styled from "styled-components";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import VideoCallOutlinedIcon from "@mui/icons-material/VideoCallOutlined";
 import Upload from './Upload';
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListRoundedIcon from '@mui/icons-material/ListRounded';
+import { useDispatch } from 'react-redux';
+import { logout } from '../redux/userSlice';
+import axios from 'axios';
 
 const Container = styled.div`
  position: sticky;
@@ -40,7 +46,6 @@ const Input = styled.input`
 border: none;
 background-color: transparent;
 outline: none;
-color: ${({ theme }) => theme.text};
 
 `;
 const Button = styled.button`
@@ -70,34 +75,72 @@ const Avatar = styled.img`
   background-color: #999;
 `;
 function Navbar() {
+  let navigate = useNavigate()
   const [open, setOpen] = useState(false);
+  const [q, setQ] = useState("");
   const { currentUser } = useSelector((state) => state.user);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const dispatch = useDispatch();
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleLogout = async () => {
+    try {
+      const removeToken = await axios.get("/auth/removetoken")
+      setAnchorEl(null);
+      if (removeToken) {
+        dispatch(logout())
+        navigate('/');
+      }
+    }
+    catch (error) {
+      console.log(error)
+    }
+  };
   return (
     <>
-    <Container>
-      <Wrapper>
-        <Search>
-          <Input placeholder="Search" />
-          <SearchOutlinedIcon />
-        </Search>
-        {currentUser ? (
-          <User>
-            <VideoCallOutlinedIcon  onClick={() => setOpen(true)}/>
-            <Avatar src={currentUser.img} />
-            {currentUser.name}
-            </User>
-        ) : (
-          <Link to="/signin" style={{ textDecoration: "none", color: "inherit" }}>
-            <Button>
-              <AccountCircleOutlinedIcon />
-              SIGN IN
-            </Button>
-          </Link>
-        )}
+      <Container>
+        <Wrapper>
+          <Search>
+            <Input placeholder="Search" onChange={e => setQ(e.target.value)} />
+            <SearchOutlinedIcon onClick={e => navigate(`/search?q=${q}`)} />
+          </Search>
+          {currentUser ? (
+            <>
+              <User>
+                <VideoCallOutlinedIcon onClick={() => setOpen(true)} />
+                <Avatar src={currentUser.img} />
+                {currentUser.name}
+                <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}><ListRoundedIcon /></Button>
+              </User>
+              <Menu
+                id="simple-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                <MenuItem onClick={handleClose}>My account</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <Link to="/signin" style={{ textDecoration: "none", color: "inherit" }}>
+              <Button>
+                <AccountCircleOutlinedIcon />
+                SIGN IN
+              </Button>
+            </Link>
+          )}
 
-      </Wrapper>
-    </Container>
-    {open && <Upload setOpen={setOpen}/>}
+        </Wrapper>
+      </Container>
+      {open && <Upload setOpen={setOpen} />}
     </>
   )
 }

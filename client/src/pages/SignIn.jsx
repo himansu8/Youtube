@@ -1,11 +1,12 @@
 import axios from 'axios';
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { loginFailure, loginStart, loginSuccess } from '../redux/userSlice';
 import { auth, provider } from '../fireBase'
 import { signInWithPopup } from "firebase/auth"
+import { Error } from '@mui/icons-material';
 
 const Container = styled.div`
   display: flex;
@@ -69,6 +70,7 @@ const Link = styled.span`
   margin-left: 30px;
 `;
 function SignIn() {
+  const { error } = useSelector((state) => state.user);
   let navigate = useNavigate()
   let [loginInfo, setLoginInfo] = useState({
     name: "",
@@ -90,11 +92,12 @@ function SignIn() {
     dispatch(loginStart())
     try {
       let res = await axios.post('/auth/signin', loginInfo)
-      console.log(res.data)
+      //console.log(res.data)
       dispatch(loginSuccess(res.data))
+      navigate('/')
     } catch (error) {
-      console.log(error).
-        dispatch(loginFailure())
+      console.log(error)
+      window.alert(error.response.data.message)
     }
   }
 
@@ -116,6 +119,7 @@ function SignIn() {
           });
       }).catch((error) => {
         dispatch(loginFailure());
+        window.alert(error.response.data.message)
       })
   }
 
@@ -143,6 +147,7 @@ function SignIn() {
           <Link>Term</Link>
         </Links>
       </More>
+
     </Container>
   )
 }

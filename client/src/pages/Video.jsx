@@ -5,7 +5,7 @@ import ThumbDownOffAltOutlinedIcon from "@mui/icons-material/ThumbDownOffAltOutl
 import ReplyOutlinedIcon from "@mui/icons-material/ReplyOutlined";
 import AddTaskOutlinedIcon from "@mui/icons-material/AddTaskOutlined";
 import Comments from '../components/Comments';
-import Card from '../components/Card';
+//import Card from '../components/Card';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -14,6 +14,7 @@ import { dislike, fetchSuccess, like } from '../redux/videoSlice';
 import { subscription } from '../redux/userSlice';
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import Recommendation from '../components/Recommendation';
 
 const Container = styled.div`
 display: flex;
@@ -60,9 +61,7 @@ const Hr = styled.hr`
   border: 0.5px solid ${({ theme }) => theme.soft};
 `;
 
-const Recommendation = styled.div`
-  flex: 2;
-`;
+
 
 const Channel = styled.div`
   display: flex;
@@ -138,35 +137,42 @@ function Video() {
     };
     fetchData();
   }, [path, dispatch]);
-  async function handleLike() {
-    await axios.put(`/users/like/${currentVideo._id}`)
-    dispatch(like(currentUser._id))
-  }
-  async function handleDislike() {
-    await axios.put(`/users/dislike/${currentVideo._id}`)
-    dispatch(dislike(currentUser._id))
-  }
-  async function handleSub() {
-    currentUser.subscribedUsers.includes(channel._id) ?
-      await axios.put(`/users/unsub/${channel._id}`) : await axios.put(`/users/sub/${channel._id}`);
-    dispatch(subscription(channel._id))
-  }
+
+  const handleLike = async () => {
+    await axios.put(`/users/like/${currentVideo._id}`);
+    dispatch(like(currentUser._id));
+  };
+  const handleDislike = async () => {
+    await axios.put(`/users/dislike/${currentVideo._id}`);
+    dispatch(dislike(currentUser._id));
+  };
+
+  const handleSub = async () => {
+    currentUser.subscribedUsers.includes(channel._id)
+      ? await axios.put(`/users/unsub/${channel._id}`)
+      : await axios.put(`/users/sub/${channel._id}`);
+    dispatch(subscription(channel._id));
+  };
+
+
   return (
     <Container>
       <Content>
         <VideoWrapper>
-          <VideoFrame src={currentVideo.videoUrl} />
+          <VideoFrame src={currentVideo.videoUrl} controls />
         </VideoWrapper>
         <Title>{currentVideo.title}</Title>
         <Details>
-          <Info>{currentVideo.views} views • {format(currentVideo.createdAt)}</Info>
+          <Info>
+            {currentVideo.views} views • {format(currentVideo.createdAt)}
+          </Info>
           <Buttons>
             <Button onClick={handleLike}>
               {currentVideo.likes?.includes(currentUser?._id) ? (
                 <ThumbUpIcon />
               ) : (
                 <ThumbUpOutlinedIcon />
-              )}
+              )}{" "}
               {currentVideo.likes?.length}
             </Button>
             <Button onClick={handleDislike}>
@@ -174,7 +180,7 @@ function Video() {
                 <ThumbDownIcon />
               ) : (
                 <ThumbDownOffAltOutlinedIcon />
-              )}
+              )}{" "}
               Dislike
             </Button>
             <Button>
@@ -195,37 +201,20 @@ function Video() {
               <Description>{currentVideo.desc}</Description>
             </ChannelDetail>
           </ChannelInfo>
-          <Subscribe onClick={handleSub}>
-            {currentUser.subscribedUsers?.includes(channel._id)
-              ? "SUBSCRIBED"
-              : "SUBSCRIBE"}
-          </Subscribe>
+          {currentUser ? (
+            <Subscribe onClick={handleSub}>
+              {currentUser.subscribedUsers?.includes(channel._id)
+                ? "SUBSCRIBED"
+                : "SUBSCRIBE"}
+            </Subscribe>
+          ) : (<Subscribe>Subscribe</Subscribe>)
+          }
+
         </Channel>
         <Hr />
         <Comments videoId={currentVideo._id} />
       </Content>
-      {/* <Recommendation>
-        <Card type="small"/>
-        <Card type="small"/>
-        <Card type="small"/>
-        <Card type="small"/>
-        <Card type="small"/>
-        <Card type="small"/>
-        <Card type="small"/>
-        <Card type="small"/>
-        <Card type="small"/>
-        <Card type="small"/>
-        <Card type="small"/>
-        <Card type="small"/>
-        <Card type="small"/>
-        <Card type="small"/>
-        <Card type="small"/>
-        <Card type="small"/>
-        <Card type="small"/>
-        <Card type="small"/>
-        <Card type="small"/>
-
-      </Recommendation> */}
+      <Recommendation tags={currentVideo.tags} />
     </Container>
   )
 }
