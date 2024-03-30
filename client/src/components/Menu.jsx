@@ -96,10 +96,12 @@ function Menu({ darkMode, setDarkMode }) {
             ApnaTube
           </Logo>
         </Link>
+        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
         <Item>
           <HomeIcon />
           Home
         </Item>
+        </Link>
         <Link to="/trends" style={{ textDecoration: "none", color: "inherit" }}>
           <Item>
             <ExploreOutlinedIcon />

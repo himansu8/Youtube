@@ -212,7 +212,7 @@ function Video() {
 
         </Channel>
         <Hr />
-        <Comments videoId={currentVideo._id} />
+        <Comments videoId={currentVideo._id} videoOwnerId={currentVideo.userId} />
       </Content>
       <Recommendation tags={currentVideo.tags} />
     </Container>

@@ -135,9 +135,14 @@ const Upload = ({ setOpen }) => {
 
   const handleUpload = async (e)=>{
     e.preventDefault();
-    const res = await axios.post("/videos", {...inputs, tags})
-    setOpen(false)
-    res.status===200 && navigate(`/video/${res.data._id}`)
+    try {
+         const res = await axios.post("/videos", {...inputs, tags})
+      setOpen(false)
+      res.status===200 && navigate(`/video/${res.data._id}`)
+    } catch (error) {
+      window.alert(error.response.data.message)
+    }
+
   }
 
   return (

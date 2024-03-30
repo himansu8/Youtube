@@ -34,11 +34,17 @@ const Date = styled.span`
 const Text = styled.span`
   font-size: 14px;
 `;
-
-function Comment({ comment }) {
+const DeleteButton = styled.button`
+  background-color: red;
+  color: white;
+  border: none;
+  cursor: pointer;
+`;
+function Comment({ comment, currentUser, videoOwnerId }) {
   const [channel, setChannel] = useState({});
-console.log(comment)
-const days = comment.createdAt
+  const [comments, setComments] = useState([]);
+  //console.log(currentUser)
+  const days = comment.createdAt
   useEffect(() => {
     const fetchComment = async () => {
       const res = await axios.get(`/users/find/${comment.userId}`);
@@ -46,13 +52,26 @@ const days = comment.createdAt
     };
     fetchComment();
   }, [comment.userId]);
+  async function handleDelete() {
+    try {
+      await axios.delete(`/comments/${comment._id}`);
+       window.location.reload();
+    } 
+      catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <Container>
-        <Avatar src={channel.img} />
-        <Details>
-            <Name>{channel.name} <Date>{format(days)}</Date></Name>
-            <Text>{comment.desc}</Text>
-        </Details>
+      <Avatar src={channel.img} />
+      <Details>
+        <Name>{channel.name} <Date>{format(days)}</Date>
+          {(comment?.userId === currentUser?._id || videoOwnerId === currentUser?._id) &&
+            <DeleteButton onClick={handleDelete}>Delete</DeleteButton>
+          }
+        </Name>
+        <Text>{comment.desc}</Text>
+      </Details>
     </Container>
   )
 }

@@ -7,6 +7,8 @@ import { loginFailure, loginStart, loginSuccess } from '../redux/userSlice';
 import { auth, provider } from '../fireBase'
 import { signInWithPopup } from "firebase/auth"
 import { Error } from '@mui/icons-material';
+import Upload from '../components/Upload';
+import SignUp from '../components/SignUp';
 
 const Container = styled.div`
   display: flex;
@@ -72,6 +74,7 @@ const Link = styled.span`
 function SignIn() {
   const { error } = useSelector((state) => state.user);
   let navigate = useNavigate()
+  const [open, setOpen] = useState(false);
   let [loginInfo, setLoginInfo] = useState({
     name: "",
     email: "",
@@ -86,6 +89,8 @@ function SignIn() {
       [e.target.name]: e.target.value
     })
   }
+
+
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -124,31 +129,34 @@ function SignIn() {
   }
 
   return (
-    <Container>
-      <Wrapper>
-        <Title>Sign In</Title>
-        <SubTitle>To continue to ApnaTube</SubTitle>
-        <Input name="name" placeholder='username' onChange={onChangeHandler} />
-        <Input type='password' name="password" placeholder='password' onChange={onChangeHandler} />
-        <Button onClick={onSubmit}>Sign In</Button>
-        <Title>Or</Title>
-        <Button onClick={signInWithGoogle}>Sign In with Google</Button>
-        <Title>Or</Title>
-        <Input placeholder="username" />
+    <>
+      <Container>
+        <Wrapper>
+          <Title>Sign In</Title>
+          <SubTitle>To continue to ApnaTube</SubTitle>
+          <Input name="email" placeholder='Email' onChange={onChangeHandler} />
+          <Input type='password' name="password" placeholder='password' onChange={onChangeHandler} />
+          <Button onClick={onSubmit}>Sign In</Button>
+          <Title>Or</Title>
+          <Button onClick={signInWithGoogle}>Sign In with Google</Button>
+          <Title>Or</Title>
+          <Title>Don't Have An Account</Title>
+          {/* <Input placeholder="username" />
         <Input placeholder="email" />
-        <Input type="password" placeholder="password" />
-        <Button>Sign up</Button>
-      </Wrapper>
-      <More>
-        English(USA)
-        <Links>
-          <Link>Help</Link>
-          <Link>Privacy</Link>
-          <Link>Term</Link>
-        </Links>
-      </More>
-
-    </Container>
+        <Input type="password" placeholder="password" /> */}
+          <Button onClick={() => setOpen(true)}> Sign up</Button>
+        </Wrapper>
+        <More>
+          English(USA)
+          <Links>
+            <Link>Help</Link>
+            <Link>Privacy</Link>
+            <Link>Term</Link>
+          </Links>
+        </More>
+      </Container>
+      {open && <SignUp setOpen={setOpen} />}
+    </>
   )
 }
 
