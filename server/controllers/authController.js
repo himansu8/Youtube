@@ -8,13 +8,14 @@ import config from "../config/config.js";
 
 export async function signup(req, res, next) {
   try {
-    let { name, email, password } = req.body;
+    let { name, email, password,img } = req.body;
     password = await bcrypt.hash(password, 12)
 
     let userData = {
       name,
       email,
-      password
+      password,
+      img
     }
 
     await userModel.create(userData);
@@ -29,8 +30,8 @@ export async function signup(req, res, next) {
 
 export async function signin(req, res, next) {
   try {
-    let { name } = req.body;
-    let userFound = await userModel.findOne({ name: name })
+    // let { email } = req.body;
+    let userFound = await userModel.findOne({ email: req.body.email })
     if (!userFound) {
       return next(createError(404, "User Not Found"))
     }
@@ -76,4 +77,16 @@ export async function googleAuth(req,res,next){
   } catch (error) {
     next(error)
   }
+}
+
+
+
+export const logoutToken = async (req, res, next) => {
+try{
+  res.clearCookie('access_token'); 
+  res.status(201).send('Token removed successfully')
+}
+catch(error){
+  next(error)
+}
 }

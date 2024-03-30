@@ -60,10 +60,10 @@ export async function subscribe(req, res, next) {
 
 export async function unSubscribe(req, res, next) {
     try {
-        await User.findByIdAndUpdate(req.user.id, {
+        await userModel.findByIdAndUpdate(req.user.id, {
             $pull: { subscribedUsers: req.params.id },
         });
-        await User.findByIdAndUpdate(req.params.id, {
+        await userModel.findByIdAndUpdate(req.params.id, {
             $inc: { subscribers: -1 },
         });
         res.status(200).json("Unsubscription successfull.")

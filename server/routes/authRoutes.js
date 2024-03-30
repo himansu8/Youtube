@@ -1,5 +1,5 @@
 import express from 'express'
-import { googleAuth, signin, signup } from '../controllers/authController.js';
+import { googleAuth, logoutToken, signin, signup } from '../controllers/authController.js';
 
 
 
@@ -14,6 +14,10 @@ router.post("/signin", signin)
 
 //google auth
 router.post("/google", googleAuth)
+
+router.get("/removetoken", logoutToken)
+
+
 
 
 
